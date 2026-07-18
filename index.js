@@ -6,25 +6,13 @@ const PORT = 5000;
 
 app.use(express.json());
 
-// Redirect root to API products page to prevent 'Cannot GET /' error
-app.get("/", (req, res) => {
+// Redirect helper routes (GET /, /product, /products -> GET /api/products)
+app.get(["/", "/product", "/products"], (req, res) => {
   res.redirect("/api/products");
 });
 
-// Redirect singular route to plural api route
-app.get("/product", (req, res) => {
-  res.redirect("/api/products");
-});
-
-app.get("/products", (req, res) => {
-  res.redirect("/api/products");
-});
-
-app.get("/api/product", (req, res) => {
-  res.redirect("/api/products");
-});
-
-app.get("/api/products", async (req, res) => {
+// 1. GET all products (Supports singular /api/product and plural /api/products)
+app.get(["/api/products", "/api/product"], async (req, res) => {
   try {
     const products = await Product.findAll();
 
@@ -39,7 +27,8 @@ app.get("/api/products", async (req, res) => {
   }
 });
 
-app.get("/api/products/:id", async (req, res) => {
+// 2. GET single product by ID (Supports singular and plural)
+app.get(["/api/products/:id", "/api/product/:id"], async (req, res) => {
   try {
     const id = Number(req.params.id);
 
@@ -68,7 +57,8 @@ app.get("/api/products/:id", async (req, res) => {
   }
 });
 
-app.post("/api/products", async (req, res) => {
+// 3. POST create new product (Supports singular and plural)
+app.post(["/api/products", "/api/product"], async (req, res) => {
   try {
     const { name, price } = req.body;
 
@@ -94,7 +84,8 @@ app.post("/api/products", async (req, res) => {
   }
 });
 
-app.put("/api/products/:id", async (req, res) => {
+// 4. PUT update product by ID (Supports singular and plural)
+app.put(["/api/products/:id", "/api/product/:id"], async (req, res) => {
   try {
     const id = Number(req.params.id);
     const { name, price } = req.body;
@@ -129,7 +120,8 @@ app.put("/api/products/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/products/:id", async (req, res) => {
+// 5. DELETE product by ID (Supports singular and plural)
+app.delete(["/api/products/:id", "/api/product/:id"], async (req, res) => {
   try {
     const id = Number(req.params.id);
 
@@ -164,7 +156,7 @@ const startServer = async () => {
     await connectDB()
 
     app.listen(PORT, () => {
-      console.log(` Server running on http://localhost:${PORT}`);
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error("Failed to connect database:", error);
