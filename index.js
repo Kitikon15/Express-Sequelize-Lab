@@ -20,6 +20,10 @@ app.get("/products", (req, res) => {
   res.redirect("/api/products");
 });
 
+app.get("/api/product", (req, res) => {
+  res.redirect("/api/products");
+});
+
 app.get("/api/products", async (req, res) => {
   try {
     const products = await Product.findAll();
